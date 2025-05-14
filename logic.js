@@ -142,7 +142,7 @@ function flipcard(){
 food_choosen.push(foodArray[food_id].name);
 
 if(food_choosen.length === 2){
-    setTimeout(checkmatch,500)
+    setTimeout(checkmatch,0)
 }
 }
 

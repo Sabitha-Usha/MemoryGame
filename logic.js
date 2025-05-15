@@ -93,42 +93,62 @@ generateboard();
 
 function generateboard() {
   for (let i = 0; i < foodArray.length; i++) {
-    const card = document.createElement("img");
-    card.setAttribute("src", "Images/food bg.jpg");
-    card.style.width = "100px";
-    card.style.height = "100px";
-    card.style.margin = "5px";
-    card.setAttribute("data_id", i);
+    const container = document.createElement("div");
+    container.className = "card-container";
+
+    const card = document.createElement("div");
+    card.className = "card";
+    card.setAttribute("data-id", i);
     card.addEventListener("click", flipcard);
-    boarddisplay.appendChild(card);
+
+    const back = document.createElement("img");
+    back.className = "back-face";
+    back.setAttribute("src", "Images/food bg.jpg");
+
+    const front = document.createElement("img");
+    front.className = "front-face";
+    front.setAttribute("src", foodArray[i].img);
+
+    card.appendChild(back);
+    card.appendChild(front);
+    container.appendChild(card);
+    boarddisplay.appendChild(container);
   }
 }
 
 function flipcard() {
-  const food_id = this.getAttribute("data_id");
-  this.setAttribute("src", foodArray[food_id].img);
-  food_choosen.push(foodArray[food_id].name);
-  food_choosen_id.push(food_id);
+  const card = this;
+  const id = card.getAttribute("data-id");
+
+  // Prevent clicking the same card twice
+  if (food_choosen_id.includes(id) || card.classList.contains("flipped")) return;
+
+  card.classList.add("flipped");
+  food_choosen.push(foodArray[id].name);
+  food_choosen_id.push(id);
 
   if (food_choosen.length === 2) {
     setTimeout(checkmatch, 500);
   }
 }
 
+
 function checkmatch() {
-  const cards = document.querySelectorAll("img");
+  const cards = document.querySelectorAll(".card");
   const [firstId, secondId] = food_choosen_id;
 
   if (food_choosen[0] === food_choosen[1]) {
-    cards[firstId].setAttribute("src", "Images/completed.png");
+      cards[firstId].setAttribute("src", "Images/completed.png");
     cards[secondId].setAttribute("src", "Images/completed.png");
-    cards[firstId].removeEventListener('click', flipcard);
-    cards[secondId].removeEventListener('click', flipcard);
+    cards[firstId].removeEventListener("click", flipcard);
+    cards[secondId].removeEventListener("click", flipcard);
     foodsWon.push(food_choosen);
     resultdisplay.innerHTML = "Score: " + foodsWon.length;
   } else {
-    cards[firstId].setAttribute("src", "Images/food bg.jpg");
+        cards[firstId].setAttribute("src", "Images/food bg.jpg");
     cards[secondId].setAttribute("src", "Images/food bg.jpg");
+    cards[firstId].classList.remove("flipped");
+    cards[secondId].classList.remove("flipped");
   }
 
   food_choosen = [];
@@ -138,6 +158,7 @@ function checkmatch() {
     alert("🎉 Congratulations! You completed the game!");
   }
 }
+
 
 function restartGame() {
   boarddisplay.innerHTML = "";
